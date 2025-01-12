@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { extractCompanyInfo } from '@/lib/perplexity'
+import Navigation from './components/Navigation'
 
 export default function HomePage() {
   const [companies, setCompanies] = useState<{ name: string; url: string }[]>([
@@ -16,6 +17,13 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<any>(null)
   const [processedData, setProcessedData] = useState<Record<string, any>[]>([])
+
+  const handleClear = () => {
+    setCompanies([{ name: '', url: '' }])
+    setError(null)
+    setResult(null)
+    setProcessedData([])
+  }
 
   const addCompany = () => {
     setCompanies([...companies, { name: '', url: '' }])
@@ -198,135 +206,135 @@ export default function HomePage() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Company Information Extractor</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            {companies.map((company, index) => (
-              <div key={index} className="space-y-2">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor={`company-name-${index}`}>Company Name</Label>
-                    <Input
-                      id={`company-name-${index}`}
-                      value={company.name}
-                      onChange={(e) => updateCompany(index, 'name', e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor={`company-url-${index}`}>Company URL (optional)</Label>
-                    <Input
-                      id={`company-url-${index}`}
-                      value={company.url}
-                      onChange={(e) => updateCompany(index, 'url', e.target.value)}
-                    />
+    <>
+      <Navigation onClear={handleClear} />
+      <div className="container mx-auto py-6 space-y-6">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="space-y-6">
+              {companies.map((company, index) => (
+                <div key={index} className="space-y-2">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor={`company-name-${index}`}>Company Name</Label>
+                      <Input
+                        id={`company-name-${index}`}
+                        value={company.name}
+                        onChange={(e) => updateCompany(index, 'name', e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor={`company-url-${index}`}>Company URL (optional)</Label>
+                      <Input
+                        id={`company-url-${index}`}
+                        value={company.url}
+                        onChange={(e) => updateCompany(index, 'url', e.target.value)}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-            
-            <div className="flex space-x-4">
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={addCompany}
-                className="flex-1"
-              >
-                Add Another Company
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => document.getElementById('file-upload')?.click()}
-                className="flex-1"
-              >
-                Upload CSV
-              </Button>
-              <input
-                id="file-upload"
-                type="file"
-                accept=".csv"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-            </div>
-
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg">
-                <p className="font-semibold">Error</p>
-                <p className="text-sm">{error}</p>
-              </div>
-            )}
-
-            <Button 
-              className="w-full" 
-              onClick={extractInfo}
-              disabled={isLoading}
-            >
-              {isLoading ? "Processing..." : "Extract Information"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {processedData.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Extracted Information</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Company Name</TableHead>
-                    <TableHead>URL</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Industry</TableHead>
-                    <TableHead>Products/Services</TableHead>
-                    <TableHead>Headquarters</TableHead>
-                    <TableHead>Year Founded</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {processedData.map((row, rowIndex) => (
-                    <TableRow key={rowIndex}>
-                      <TableCell>{row.name}</TableCell>
-                      <TableCell>{row.url}</TableCell>
-                      <TableCell>{row.description}</TableCell>
-                      <TableCell>{row.industry}</TableCell>
-                      <TableCell>{row.products_services}</TableCell>
-                      <TableCell>{row.headquarters}</TableCell>
-                      <TableCell>{row.year_founded}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              ))}
               
-              <Button onClick={exportToCsv}>Export to CSV</Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+              <div className="flex space-x-4">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={addCompany}
+                  className="flex-1"
+                >
+                  Add Another Company
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => document.getElementById('file-upload')?.click()}
+                  className="flex-1"
+                >
+                  Upload CSV
+                </Button>
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept=".csv"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </div>
 
-      {result && !processedData.length && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Raw API Response</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <pre className="whitespace-pre-wrap overflow-auto max-h-[400px]">{
-                typeof result === 'string' ? result : JSON.stringify(result, null, 2)
-              }</pre>
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg">
+                  <p className="font-semibold">Error</p>
+                  <p className="text-sm">{error}</p>
+                </div>
+              )}
+
+              <Button 
+                className="w-full" 
+                onClick={extractInfo}
+                disabled={isLoading}
+              >
+                {isLoading ? "Processing..." : "Extract Information"}
+              </Button>
             </div>
           </CardContent>
         </Card>
-      )}
-    </div>
+
+        {processedData.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Extracted Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Company Name</TableHead>
+                      <TableHead>URL</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead>Industry</TableHead>
+                      <TableHead>Products/Services</TableHead>
+                      <TableHead>Headquarters</TableHead>
+                      <TableHead>Year Founded</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {processedData.map((row, rowIndex) => (
+                      <TableRow key={rowIndex}>
+                        <TableCell>{row.name}</TableCell>
+                        <TableCell>{row.url}</TableCell>
+                        <TableCell>{row.description}</TableCell>
+                        <TableCell>{row.industry}</TableCell>
+                        <TableCell>{row.products_services}</TableCell>
+                        <TableCell>{row.headquarters}</TableCell>
+                        <TableCell>{row.year_founded}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                
+                <Button onClick={exportToCsv}>Export to CSV</Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {result && !processedData.length && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Raw API Response</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <pre className="whitespace-pre-wrap overflow-auto max-h-[400px]">{
+                  typeof result === 'string' ? result : JSON.stringify(result, null, 2)
+                }</pre>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </>
   )
 }
 

@@ -1,6 +1,5 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
-import Navigation from './components/Navigation'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -20,8 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
-        <main className="container mx-auto p-4">
-          <Navigation />
+        <main className="min-h-screen">
           {children}
         </main>
       </body>
