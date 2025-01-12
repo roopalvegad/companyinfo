@@ -12,11 +12,6 @@ export default function Navigation() {
               <Link href="/">Home</Link>
             </Button>
           </li>
-          <li>
-            <Button variant="ghost" asChild>
-              <Link href="/results">Results</Link>
-            </Button>
-          </li>
         </ul>
       </div>
     </nav>
